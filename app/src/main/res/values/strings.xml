@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">KickOn</string>
+    <string name="bar_search">Suche nach einer Bar ...</string>
+    <string name="title_activity_bar">BarActivity</string>
+    <string name="upload_price_list">Getränkekarte Hochladen</string>
+    <string name="bar_vicinity">Bars in deiner Nähe ...</string>
+</resources>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="352dp"
+        android:layout_height="535dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@android:drawable/ic_menu_search"
+            android:ems="10"
+            android:hint="@string/bar_search"
+            android:inputType="textPersonName"
+            android:drawableStart="@android:drawable/ic_menu_search" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:contentDescription="TODO"
+            android:scaleType="centerCrop"
+            android:src="@drawable/map" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="@string/bar_vicinity"
+                android:textColor="@android:color/background_light"
+                android:layout_marginStart="8dp" />
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="7dp"
+                android:layout_weight="1"
+                android:drawableLeft="@android:drawable/sym_def_app_icon"
+                android:onClick="onClickBar"
+                android:text="Musterbar 1"
+                android:textColor="@android:color/background_light"
+                android:drawableStart="@android:drawable/sym_def_app_icon" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="7dp"
+                android:layout_weight="1"
+                android:drawableLeft="@android:drawable/sym_def_app_icon"
+                android:onClick="onClickBar"
+                android:text="Musterbar 2"
+                android:textColor="@android:color/background_light"
+                android:drawableStart="@android:drawable/sym_def_app_icon" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="7dp"
+                android:layout_weight="1"
+                android:drawableLeft="@android:drawable/sym_def_app_icon"
+                android:onClick="onClickBar"
+                android:text="Musterbar 3"
+                android:textColor="@android:color/background_light"
+                android:drawableStart="@android:drawable/sym_def_app_icon" />
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
