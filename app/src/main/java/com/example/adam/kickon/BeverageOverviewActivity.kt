@@ -10,16 +10,26 @@ import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import kotlin.properties.Delegates
 
-
+/**
+ * @brief Detects the items of a beverage card (given by image)
+ *        and gives the chance to correct the items
+ *
+ * @property m_ocrProcessor Represents the unit,
+ *                          which detects cocktails and there prices from an image
+ */
 class BeverageOverviewActivity : Activity() {
 
     private var TAG = "BEVERAGE_OVERVIEW"
 
-    // Encapsultes the OCR functions
+    // Encapsulates the OCR functions
     private var m_ocrProcessor by Delegates.notNull<OCRProcessor>()
 
+    /**
+     * @brief Searching for cocktails and prices in the given image and displaying them
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beverage_overview)
@@ -46,10 +56,18 @@ class BeverageOverviewActivity : Activity() {
             Log.d(TAG,"Cocktail: " + it.key + "\tprice: " + it.value + " €\n")
         }
 
+        /// TODO: Display the cocktails with there prices
+    }
+
+    /**
+     * @brief Finishing this activity with "OK" status and saving the beverage list
+     */
+    fun onConfirm(view : View) {
+        /// TODO: Saving beverage list in the database
+
         /// Prepare result
 
         val resultIntent = Intent()
-        //resultIntent.putExtra("some_key", "String data")
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
     }

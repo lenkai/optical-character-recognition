@@ -82,7 +82,7 @@ class BarActivity : Activity() {
     fun onUpload(view: View) {
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, getString(R.string.app_name))
-        values.put(MediaStore.Images.Media.DESCRIPTION, getString(R.string.description))
+        values.put(MediaStore.Images.Media.DESCRIPTION, getString(R.string.picture_description))
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
 
         m_imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)

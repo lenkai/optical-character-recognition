@@ -133,6 +133,13 @@ class OCRProcessor(context: Context) {
         return HashMap<String, Double>(map.toMap())
     }
 
+    /**
+     * @brief Sorting the textblocks of a side by y-coordinate
+     *
+     * @param side List of Textblocks, which should be sorted
+     *
+     * @return the sorted Textblock List
+     */
     private fun sortSide(side : MutableList<TextBlock>) : MutableList<TextBlock> {
         var map = mutableMapOf<Int, TextBlock>()
         var sorted_side = mutableListOf<TextBlock>()

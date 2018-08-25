@@ -4,5 +4,6 @@
     <string name="title_activity_bar">BarActivity</string>
     <string name="upload_price_list">Getränkekarte Hochladen</string>
     <string name="bar_vicinity">Bars in deiner Nähe ...</string>
-    <string name="description">Picture for OCR</string>
+    <string name="picture_description">Picture for OCR</string>
+    <string name="beverage_confirm">Confirm</string>
 </resources>
