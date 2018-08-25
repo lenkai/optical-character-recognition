@@ -1,10 +1,11 @@
 package com.example.adam.kickon
 
-import android.os.Bundle
 import android.app.Activity
 import android.content.Intent
+import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 
 
@@ -16,9 +17,24 @@ class BarActivity : Activity() {
 
         // Display the Bar name from the button on the textView
         val buttonText = intent.getStringExtra(EXTRA_MESSAGE)
-        val textView = findViewById<TextView>(R.id.barText).apply {
+        findViewById<TextView>(R.id.barText).apply {
             text = buttonText
         }
+
+        Thread {
+            //image view:
+            val result = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/bar_details.php?barid=" + intent.getIntExtra(DATABASE_ID, 0));
+
+            val imgBox = findViewById(R.id.imageView2) as ImageView
+            runOnUiThread {
+                try {
+                    imgBox.setImageDrawable(Tools.loadImageFromUrl(result.getJSONObject(0).getJSONArray("images_urls").getString(0), this))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    imgBox.setImageResource(R.drawable.noimage);
+                }
+            }
+        }.start()
     }
 
     /**
