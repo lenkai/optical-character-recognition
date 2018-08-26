@@ -33,7 +33,7 @@ class BarActivity : Activity() {
     // Button for starting the camera activity
     private var m_cameraButton by Delegates.notNull<Button>()
     // How we can get the created picture
-    private var m_imageUri by Delegates.notNull<Uri>()
+    private lateinit var m_imageUri : Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,7 +123,7 @@ class BarActivity : Activity() {
                 else {
                     // Delete the image
                     val rowsDeleted = contentResolver.delete(m_imageUri, null, null)
-                    Log.d(TAG, rowsDeleted as String + " rows deleted")
+                    Log.d(TAG, rowsDeleted.toString() + " rows deleted")
                 }
 
             OVERVIEW_REQUEST ->
