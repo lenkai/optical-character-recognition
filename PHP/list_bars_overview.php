@@ -18,6 +18,7 @@ while($row = $liststatement->fetch()){
 
   $bardata['id'] = $row['ID'];
   $bardata['name'] = $row['NAME'];
+  $bardata['description'] = $row['DESCRIPTION'];
   //generate image_url by ID
   $bardata['logo_url'] = "https://lennartkaiser.de/ocr/assets/logos/". $row['ID'] .".png";
 

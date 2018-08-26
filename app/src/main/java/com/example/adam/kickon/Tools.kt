@@ -38,7 +38,6 @@ class Tools {
             //val url = "https://lennartkaiser.de/ocr/list_bars_overview.php"
             val obj = URL(url)
             val response = StringBuffer()
-            var lines = ""
 
             with(obj.openConnection() as HttpURLConnection) {
                 // optional default is GET
@@ -59,7 +58,7 @@ class Tools {
 
                 val jsonObj = JSONObject(response.substring(response.indexOf("{"), response.lastIndexOf("}") + 1))
                 val results = jsonObj.getJSONArray("results")
-                return results;
+                return results
             }
         }
 
@@ -67,7 +66,7 @@ class Tools {
          * gets the bar overview List, creates bar objects and puts them into the "ArrayList<Bar>",
          * which is returned.
          */
-        fun getBarList(): ArrayList<Bar> {
+        fun getBarList(context: Context): ArrayList<Bar> {
             val barList = ArrayList<Bar>()
 
             try {
@@ -76,9 +75,14 @@ class Tools {
 
                 // Get Recipe objects from data
                 (0 until bars.length()).mapTo(barList) {
+
+
+
                     Bar(bars.getJSONObject(it).getInt("id"),
                             bars.getJSONObject(it).getString("name"),
-                            bars.getJSONObject(it).getString("logo_url"))
+                            bars.getJSONObject(it).getString("description"),
+                            Tools.loadImageFromUrl(bars.getJSONObject(it).getString("logo_url"),
+                                    context))
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()

@@ -13,7 +13,7 @@ const val DATABASE_ID = "com.example.adam.kickon.ID"
 
 class MainActivity : Activity() {
 
-    val lastData = mutableMapOf<Int, Bar>();
+    private val lastData = mutableMapOf<Int, Bar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +28,7 @@ class MainActivity : Activity() {
          * function updateList() to refresh the data
          */
         findViewById<SwipeRefreshLayout>(R.id.pullToRefresh).setOnRefreshListener {
+            //Toast.makeText(this, "refresh", Toast.LENGTH_SHORT).show()
             updateList()
             findViewById<SwipeRefreshLayout>(R.id.pullToRefresh).isRefreshing = false
         }
@@ -56,7 +57,7 @@ class MainActivity : Activity() {
         Thread {
             val listView = findViewById<ListView>(R.id.bar_list_view)
 
-            val barList = Tools.getBarList()
+            val barList = Tools.getBarList(this)
             lastData.clear()
             barList.forEachIndexed { index, e ->
                 lastData.put(index, e)

@@ -27,23 +27,29 @@ class BarAdapter(context: Context,
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-
-
         // Get view for row item
-        val rowView = inflater.inflate(R.layout.list_item, parent, false)
+        var rowView = convertView
+        if(rowView == null) {
+            rowView = inflater.inflate(R.layout.list_item, parent, false)
+        }
 
-        val titleTextView = rowView.findViewById(R.id.bar_list_title) as TextView
+        val titleTextView = rowView!!.findViewById(R.id.bar_list_title) as TextView
         val subtitleTextView = rowView.findViewById(R.id.bar_list_subtitle) as TextView
-        val detailTextView = rowView.findViewById(R.id.bar_list_detail) as TextView
         val thumbnailImageView = rowView.findViewById(R.id.bar_list_thumbnail) as ImageView
 
         val bar = getItem(position) as Bar
 
         titleTextView.text = bar.name
-        subtitleTextView.text = "Beschreibung"//bar.description
-        detailTextView.text = "Tag"
 
-        thumbnailImageView.setImageDrawable(Tools.loadImageFromUrl(bar.logo_url, parent.getContext()))
+        var text = if(bar.description.length >40){
+            bar.description.substring(0, 40)
+        }else{
+            bar.description
+        }
+        text += "..."
+        subtitleTextView.text = text
+
+        thumbnailImageView.setImageDrawable(bar.logo)
 
         return rowView
     }
