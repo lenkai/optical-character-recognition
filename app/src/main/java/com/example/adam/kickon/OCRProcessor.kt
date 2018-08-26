@@ -76,7 +76,7 @@ class OCRProcessor(context: Context) {
 
         /// Sort textblocks into left (possible cocktails) and right (possible prices)
 
-        val left = mutableListOf<String>()
+        /*val left = mutableListOf<String>()
         val right = mutableListOf<String>()
 
         for (index in 0..(textBlocks.size() - 1)) {
@@ -91,6 +91,38 @@ class OCRProcessor(context: Context) {
                 textBlocks.valueAt(index).components.forEach {
                     right.add(it.value.replace("\n", "").replace("E", "").replace("€", "").replace(" ", ""))
                 }
+            }
+        }*/
+
+        var left_blocks = mutableListOf<TextBlock>()
+        var right_blocks = mutableListOf<TextBlock>()
+
+        for (index in 0..(textBlocks.size() - 1)) {
+            val x_value = textBlocks.valueAt(index).boundingBox.centerX()
+
+            if(abs(x_value - min) < abs(x_value - max)) {
+                left_blocks.add(textBlocks.valueAt(index))
+            }
+            else{
+                right_blocks.add(textBlocks.valueAt(index))
+            }
+        }
+
+        left_blocks = sortSide(left_blocks)
+        right_blocks = sortSide(right_blocks)
+
+        var left = mutableListOf<String>()
+        var right = mutableListOf<String>()
+
+        left_blocks.forEach {
+            it.components.forEach {
+                left.add(it.value.replace("\n", ""))
+            }
+        }
+
+        right_blocks.forEach {
+            it.components.forEach {
+                right.add(it.value.replace("\n", "").replace("E", "").replace("€", "").replace(" ", ""))
             }
         }
 
