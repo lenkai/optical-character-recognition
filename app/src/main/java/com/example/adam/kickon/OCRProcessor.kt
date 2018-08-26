@@ -140,7 +140,7 @@ class OCRProcessor(context: Context) {
         }
 
         for(index in 0..(right.size - 1)) {
-            val text = right.elementAt(index)
+            val text = right.elementAt(index).split(" ").last()
             if(Pattern.matches(PRICE_REGEX, text)) {
                 detected_prices.add(text.replace(",", ".").toDouble())
             }
