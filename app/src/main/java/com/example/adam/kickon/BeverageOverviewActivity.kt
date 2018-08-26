@@ -24,8 +24,6 @@ import kotlin.properties.Delegates
  */
 class BeverageOverviewActivity : Activity() {
 
-    /// TODO: Implementing "ADD"-button
-
     private var TAG = "BEVERAGE_OVERVIEW"
 
     private lateinit var m_recyclerView: RecyclerView
@@ -65,13 +63,9 @@ class BeverageOverviewActivity : Activity() {
         m_viewAdapter = BeverageAdapter(m_beverageList)
         m_viewManager = LinearLayoutManager(this)
         m_recyclerView = findViewById<RecyclerView>(R.id.beverageListView).apply {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
-
             // specify an viewAdapter (see also next example)
             adapter = m_viewAdapter
-
             // use a linear layout manager
             layoutManager = m_viewManager
         }
@@ -93,5 +87,13 @@ class BeverageOverviewActivity : Activity() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
+    }
+
+    /**
+     * @brief Adding a default beverage to the beverage list
+     */
+    fun addBeverage(view : View) {
+        m_beverageList.add(m_beverageList.size, Beverage())
+        m_viewAdapter.notifyDataSetChanged()
     }
 }
