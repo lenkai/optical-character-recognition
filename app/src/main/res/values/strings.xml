@@ -6,4 +6,7 @@
     <string name="bar_vicinity">Bars in deiner Nähe ...</string>
     <string name="picture_description">Picture for OCR</string>
     <string name="beverage_confirm">Confirm</string>
+    <string name="list_beverage">Beverage:</string>
+    <string name="list_price">Price:</string>
+    <string name="list_price_unit">€</string>
 </resources>

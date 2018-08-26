@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.provider.MediaStore
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import kotlin.properties.Delegates
@@ -22,10 +24,17 @@ import kotlin.properties.Delegates
  */
 class BeverageOverviewActivity : Activity() {
 
+    /// TODO: Implementing "ADD"-button
+
     private var TAG = "BEVERAGE_OVERVIEW"
+
+    private lateinit var m_recyclerView: RecyclerView
+    private lateinit var m_viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var m_viewManager: RecyclerView.LayoutManager
 
     // Encapsulates the OCR functions
     private var m_ocrProcessor by Delegates.notNull<OCRProcessor>()
+    private lateinit var m_beverageList : MutableList<Beverage>
 
     /**
      * @brief Searching for cocktails and prices in the given image and displaying them
@@ -49,14 +58,23 @@ class BeverageOverviewActivity : Activity() {
         /// OCR
 
         // Detect cocktails and there prices
-        val map =  m_ocrProcessor.detectFrom(bitmapRotated) // detectPrices(items)
+        m_beverageList =  m_ocrProcessor.detectFrom(bitmapRotated) // detectPrices(items)
 
-        // Do something with the results
-        map.forEach {
-            Log.d(TAG,"Cocktail: " + it.key + "\tprice: " + it.value + " €\n")
+        /// Preparing the RecyclerView
+
+        m_viewAdapter = BeverageAdapter(m_beverageList)
+        m_viewManager = LinearLayoutManager(this)
+        m_recyclerView = findViewById<RecyclerView>(R.id.beverageListView).apply {
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            setHasFixedSize(true)
+
+            // specify an viewAdapter (see also next example)
+            adapter = m_viewAdapter
+
+            // use a linear layout manager
+            layoutManager = m_viewManager
         }
-
-        /// TODO: Display the cocktails with there prices
     }
 
     /**
@@ -64,6 +82,11 @@ class BeverageOverviewActivity : Activity() {
      */
     fun onConfirm(view : View) {
         /// TODO: Saving beverage list in the database
+
+        // Do something with the results
+        m_beverageList.forEach {
+            Log.d(TAG,"Cocktail: " + it.name + "\tprice: " + it.price + " €\n")
+        }
 
         /// Prepare result
 

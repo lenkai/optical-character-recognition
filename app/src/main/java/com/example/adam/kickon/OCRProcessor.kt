@@ -42,7 +42,7 @@ class OCRProcessor(context: Context) {
      *
      * @return @return map with cocktails (Strings) as keys and there prices (Doubles) as values
      */
-    public fun detectFrom(bitmap : Bitmap) : HashMap<String, Double> {
+    public fun detectFrom(bitmap : Bitmap) : MutableList<Beverage> {
         val frame = Frame.Builder().setBitmap(bitmap).build()
         // Do OCR
         return analyseText(textRecognizer.detect(frame))
@@ -55,7 +55,7 @@ class OCRProcessor(context: Context) {
      *
      * @return map with cocktails (Strings) as keys and there prices (Doubles) as values
      */
-    private fun analyseText(textBlocks: SparseArray<TextBlock>) : HashMap<String, Double> {
+    private fun analyseText(textBlocks: SparseArray<TextBlock>) : MutableList<Beverage> {
         /// Emit left and right border
 
         var min = Int.MAX_VALUE
@@ -117,7 +117,7 @@ class OCRProcessor(context: Context) {
         /// Store cocktail with belonging price in a map
 
         val size : Int
-        val map = mutableMapOf<String, Double>()
+        val list = mutableListOf<Beverage>()
 
         if(detected_cocktails.size <= detected_prices.size) {
             size = detected_cocktails.size
@@ -127,10 +127,13 @@ class OCRProcessor(context: Context) {
         }
 
         for (index in 0..(size - 1)) {
-            map[detected_cocktails.elementAt(index)] = detected_prices.elementAt(index)
+            var beverage = Beverage()
+            beverage.name = detected_cocktails.elementAt(index)
+            beverage.price = detected_prices.elementAt(index)
+            list.add(beverage)
         }
 
-        return HashMap<String, Double>(map.toMap())
+        return list
     }
 
     /**
