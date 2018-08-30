@@ -1,13 +1,13 @@
 package com.example.adam.kickon
 
-import android.app.ActionBar
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageButton
 
 /**
  * @brief Connects the logical beveragelist with the RecyclerView
@@ -58,7 +58,7 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
      * @brief Logical representation of the beverage visualization
      *
      * @property beverage Name of the beverage
-     * @property prive of the beverage
+     * @property price of the beverage
      *
      * @property m_beverageListener What happens, when the name is changed by the user?
      * @property m_priceListener What happens, when the price is changed by the user?
@@ -107,7 +107,7 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
         /**
          * @brief Updating the view position property
          *
-         * @param posiion on the view
+         * @param position on the view
          */
         fun updatePosition(position: Int) {
             m_position = position

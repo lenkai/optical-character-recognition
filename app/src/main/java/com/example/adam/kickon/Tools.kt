@@ -17,7 +17,7 @@ class Tools {
         /**
          * get an image from a website and returns it as an Drawable Objekt
          */
-        fun loadImageFromUrl(url: String, context: Context): Drawable {
+        fun loadImageFromUrl(url: String, context: Context): Drawable? {
             try {
                 val input = URL(url).getContent() as InputStream
                 return Drawable.createFromStream(input, "name")
@@ -57,8 +57,7 @@ class Tools {
 
 
                 val jsonObj = JSONObject(response.substring(response.indexOf("{"), response.lastIndexOf("}") + 1))
-                val results = jsonObj.getJSONArray("results")
-                return results
+                return jsonObj.getJSONArray("results")
             }
         }
 

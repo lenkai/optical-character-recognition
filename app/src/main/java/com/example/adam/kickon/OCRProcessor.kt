@@ -2,11 +2,10 @@ package com.example.adam.kickon
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.util.SparseArray
+import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
-import com.google.android.gms.vision.Frame
 import java.lang.Math.abs
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
@@ -42,7 +41,7 @@ class OCRProcessor(context: Context) {
      *
      * @return @return map with cocktails (Strings) as keys and there prices (Doubles) as values
      */
-    public fun detectFrom(bitmap : Bitmap) : MutableList<Beverage> {
+    fun detectFrom(bitmap : Bitmap) : MutableList<Beverage> {
         val frame = Frame.Builder().setBitmap(bitmap).build()
         // Do OCR
         return analyseText(textRecognizer.detect(frame))
@@ -111,8 +110,8 @@ class OCRProcessor(context: Context) {
         left_blocks = sortSide(left_blocks)
         right_blocks = sortSide(right_blocks)
 
-        var left = mutableListOf<String>()
-        var right = mutableListOf<String>()
+        val left = mutableListOf<String>()
+        val right = mutableListOf<String>()
 
         left_blocks.forEach {
             it.components.forEach {
@@ -128,8 +127,8 @@ class OCRProcessor(context: Context) {
 
         /// Filter cocktails and prices (No headers or infos)
 
-        var detected_cocktails = mutableListOf<String>()
-        var detected_prices = mutableListOf<Double>()
+        val detected_cocktails = mutableListOf<String>()
+        val detected_prices = mutableListOf<Double>()
 
         for (index in 0..(left.size - 1)) {
             val text = left.elementAt(index)
@@ -159,7 +158,7 @@ class OCRProcessor(context: Context) {
         }
 
         for (index in 0..(size - 1)) {
-            var beverage = Beverage()
+            val beverage = Beverage()
             beverage.name = detected_cocktails.elementAt(index)
             beverage.price = detected_prices.elementAt(index)
             list.add(beverage)
@@ -176,8 +175,8 @@ class OCRProcessor(context: Context) {
      * @return the sorted Textblock List
      */
     private fun sortSide(side : MutableList<TextBlock>) : MutableList<TextBlock> {
-        var map = mutableMapOf<Int, TextBlock>()
-        var sorted_side = mutableListOf<TextBlock>()
+        val map = mutableMapOf<Int, TextBlock>()
+        val sorted_side = mutableListOf<TextBlock>()
 
         for(index in 0..(side.size - 1)) {
             map[side[index].boundingBox.centerY()] = side[index]

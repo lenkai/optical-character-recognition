@@ -22,7 +22,7 @@
         <activity
             android:name=".BarActivity"
             android:label="@string/title_activity_bar" />
-        <activity android:name=".BeverageOverviewActivity"></activity>
+        <activity android:name=".BeverageOverviewActivity"/>
     </application>
 
 </manifest>

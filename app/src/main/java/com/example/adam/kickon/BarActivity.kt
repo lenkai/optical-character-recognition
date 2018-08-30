@@ -1,24 +1,21 @@
 package com.example.adam.kickon
 
 import android.Manifest
-import android.os.Bundle
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Matrix
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
+import android.support.annotation.RequiresApi
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import java.io.IOException
 import kotlin.properties.Delegates
-import android.R.attr.bitmap
-import java.io.ByteArrayOutputStream
 
 
 const val EXTRA_IMAGE = "com.example.adam.kickon.IMAGE"
@@ -28,7 +25,7 @@ class BarActivity : Activity() {
     private val TAG = "BAR_ACTIVITY"
     private val IMAGE_CAPTURE = 1
     private val OVERVIEW_REQUEST = 2
-    private val PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
+    private val PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123
 
     // Button for starting the camera activity
     private var m_cameraButton by Delegates.notNull<Button>()
@@ -48,15 +45,16 @@ class BarActivity : Activity() {
 
         Thread {
             //image view:
-            val result = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/bar_details.php?barid=" + intent.getIntExtra(DATABASE_ID, 0));
+            val result = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/bar_details.php?barid=" + intent.getIntExtra(DATABASE_ID, 0))
 
             val imgBox = findViewById(R.id.imageView2) as ImageView
+            val img = Tools.loadImageFromUrl(result.getJSONObject(0).getJSONArray("images_urls").getString(0), this)
             runOnUiThread {
                 try {
-                    imgBox.setImageDrawable(Tools.loadImageFromUrl(result.getJSONObject(0).getJSONArray("images_urls").getString(0), this))
+                    imgBox.setImageDrawable(img)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    imgBox.setImageResource(R.drawable.noimage);
+                    imgBox.setImageResource(R.drawable.noimage)
                 }
             }
         }.start()
@@ -65,6 +63,7 @@ class BarActivity : Activity() {
     /**
      * @brief Called when this activity was started
      */
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onStart() {
         super.onStart()
 
@@ -123,7 +122,7 @@ class BarActivity : Activity() {
      * @param requestCode Is it really our camera activity?
      * @param resultCode Can we work with the created image?
      */
-    override protected fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         when(requestCode) {
