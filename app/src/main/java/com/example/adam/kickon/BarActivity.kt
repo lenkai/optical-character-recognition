@@ -41,13 +41,27 @@ class BarActivity : Activity() {
 
         // Display the Bar name from the button on the textView
         val buttonText = intent.getStringExtra(EXTRA_MESSAGE)
-        val textView = findViewById<TextView>(R.id.barText).apply {
+        findViewById<TextView>(R.id.barText).apply {
             text = buttonText
         }
-
         m_cameraButton = findViewById<Button>(R.id.uploadBeverageList)
-    }
 
+        Thread {
+            //image view:
+            val result = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/bar_details.php?barid=" + intent.getIntExtra(DATABASE_ID, 0));
+
+            val imgBox = findViewById(R.id.imageView2) as ImageView
+            runOnUiThread {
+                try {
+                    imgBox.setImageDrawable(Tools.loadImageFromUrl(result.getJSONObject(0).getJSONArray("images_urls").getString(0), this))
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    imgBox.setImageResource(R.drawable.noimage);
+                }
+            }
+        }.start()
+    }
+  
     /**
      * @brief Called when this activity was started
      */
@@ -74,6 +88,7 @@ class BarActivity : Activity() {
                 (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)){
             m_cameraButton.setEnabled(true)
         }
+
     }
 
     /**

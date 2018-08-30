@@ -8,13 +8,13 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:layout_width="352dp"
-        android:layout_height="535dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginStart="64dp"
         android:layout_marginTop="16dp"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
@@ -28,10 +28,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@android:drawable/ic_menu_search"
+            android:drawableStart="@android:drawable/ic_menu_search"
             android:ems="10"
             android:hint="@string/bar_search"
-            android:inputType="textPersonName"
-            android:drawableStart="@android:drawable/ic_menu_search" />
+            android:inputType="textPersonName" />
 
         <ImageView
             android:id="@+id/imageView"
@@ -54,46 +54,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
                 android:text="@string/bar_vicinity"
-                android:textColor="@android:color/background_light"
-                android:layout_marginStart="8dp" />
+                android:textColor="@android:color/background_light" />
 
-            <Button
-                android:id="@+id/button"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="7dp"
-                android:layout_weight="1"
-                android:drawableLeft="@android:drawable/sym_def_app_icon"
-                android:onClick="onClickBar"
-                android:text="Musterbar 1"
-                android:textColor="@android:color/background_light"
-                android:drawableStart="@android:drawable/sym_def_app_icon" />
+                android:layout_height="match_parent"
+                android:layout_margin="10dp">
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="7dp"
-                android:layout_weight="1"
-                android:drawableLeft="@android:drawable/sym_def_app_icon"
-                android:onClick="onClickBar"
-                android:text="Musterbar 2"
-                android:textColor="@android:color/background_light"
-                android:drawableStart="@android:drawable/sym_def_app_icon" />
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/pullToRefresh"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="7dp"
-                android:layout_weight="1"
-                android:drawableLeft="@android:drawable/sym_def_app_icon"
-                android:onClick="onClickBar"
-                android:text="Musterbar 3"
-                android:textColor="@android:color/background_light"
-                android:drawableStart="@android:drawable/sym_def_app_icon" />
+
+                    <ListView
+                        android:id="@+id/bar_list_view"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </android.support.v4.widget.SwipeRefreshLayout>
+
+
+            </android.support.constraint.ConstraintLayout>
 
         </LinearLayout>
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
