@@ -7,10 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
+import android.widget.*
 
 /**
  * @brief Connects the logical beveragelist with the RecyclerView
@@ -69,8 +66,10 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
     inner class BeverageViewHolder(val view : View) : RecyclerView.ViewHolder(view) {
         var beverage : EditText
         var price : EditText
+        var deleteButton : ImageButton
         private var m_beverageListener : BeverageListener
         private var m_priceListener : PriceListener
+        private var m_deleteListener : DeleteListener
 
         init {
             beverage = view.findViewById(R.id.editBeverage)
@@ -79,6 +78,9 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
             price = view.findViewById(R.id.editPrice)
             m_priceListener = PriceListener()
             price.addTextChangedListener(m_priceListener)
+            deleteButton = view.findViewById(R.id.deleteButton)
+            m_deleteListener = DeleteListener()
+            deleteButton.setOnClickListener(m_deleteListener)
         }
 
         /**
@@ -89,6 +91,7 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
         fun updatePosition(position : Int) {
             m_beverageListener.updatePosition(position)
             m_priceListener.updatePosition(position)
+            m_deleteListener.updatePosition(position)
         }
     }
 
@@ -143,5 +146,28 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             m_beverageList[m_position].price = s.toString().toDouble()
         }
+    }
+
+    /**
+     * @brief Managing the deletion of a beverage from the list
+     *
+     * @property m_position Position of the dataset, which whould be deleted
+     */
+    private inner class DeleteListener : View.OnClickListener {
+
+        private var m_position : Int = 0
+
+        fun updatePosition(position: Int) {
+            m_position = position
+        }
+
+        /**
+         * @brief Deleting the dataset at the given position
+         */
+        override fun onClick(v: View?) {
+            m_beverageList.removeAt(m_position)
+            notifyDataSetChanged()
+        }
+
     }
 }
