@@ -16,14 +16,11 @@ import kotlin.properties.Delegates
  *
  * @property context of the textrecognizer
  */
-class OCRProcessor(context: Context) {
+class OCRProcessor(val context: Context, val cocktails : ArrayList<String>) {
     // Format of the prices
     private val PRICE_REGEX = "\\d+((,|\\.)\\d{2})?"
     // Topic for the log
     private val TAG = "OCRProcessor"
-    // Hard coded "database"
-    private val cocktails = listOf<String>("Havana Club", "Long Island Iced Tea", "Zombie")
-
     // Google Visions textrecognizer
     private var textRecognizer by Delegates.notNull<TextRecognizer>()
 
@@ -33,6 +30,8 @@ class OCRProcessor(context: Context) {
     init{
         textRecognizer = TextRecognizer.Builder(context).build()
     }
+
+
 
     /**
      * @brief Detects cocktails and prices an a given bitmap
@@ -74,24 +73,6 @@ class OCRProcessor(context: Context) {
         }
 
         /// Sort textblocks into left (possible cocktails) and right (possible prices)
-
-        /*val left = mutableListOf<String>()
-        val right = mutableListOf<String>()
-
-        for (index in 0..(textBlocks.size() - 1)) {
-            val x_value = textBlocks.valueAt(index).boundingBox.centerX()
-
-            if(abs(x_value - min) < abs(x_value - max)) {
-                textBlocks.valueAt(index).components.forEach {
-                    left.add(it.value.replace("\n", ""))
-                }
-            }
-            else{
-                textBlocks.valueAt(index).components.forEach {
-                    right.add(it.value.replace("\n", "").replace("E", "").replace("€", "").replace(" ", ""))
-                }
-            }
-        }*/
 
         var left_blocks = mutableListOf<TextBlock>()
         var right_blocks = mutableListOf<TextBlock>()

@@ -43,6 +43,12 @@ class BarActivity : Activity() {
         }
         m_cameraButton = findViewById<Button>(R.id.uploadBeverageList)
 
+        Log.d(TAG, "DRINKS!!!!!!!!")
+
+        Tools.getDrinkList(applicationContext).forEach {
+            Log.d(TAG, "Drink:  " + it.name)
+        }
+
         Thread {
             //image view:
             val result = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/bar_details.php?barid=" + intent.getIntExtra(DATABASE_ID, 0))

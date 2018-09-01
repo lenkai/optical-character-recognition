@@ -89,5 +89,32 @@ class Tools {
 
             return barList
         }
+
+        /**
+         * gets the drink List, creates drink objects and puts them into the "ArrayList<Drink>",
+         * which is returned.
+         */
+        fun getDrinkList(context: Context): ArrayList<Drink> {
+            val drinkList = ArrayList<Drink>()
+
+            try {
+                // Load data
+                val bars = loadJSONfromUrl("https://lennartkaiser.de/ocr/list_drinks.php")
+
+                // Get Recipe objects from data
+                (0 until bars.length()).mapTo(drinkList) {
+
+
+
+                    Drink(bars.getJSONObject(it).getInt("drink_id"),
+                            bars.getJSONObject(it).getString("name"),
+                            bars.getJSONObject(it).getString("drink_description"))
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+
+            return drinkList
+        }
     }
 }

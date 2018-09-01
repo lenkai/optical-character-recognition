@@ -38,7 +38,14 @@ class BeverageOverviewActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beverage_overview)
-        m_ocrProcessor = OCRProcessor(applicationContext)
+
+        var drinkNames = ArrayList<String>()
+
+        Tools.getDrinkList(applicationContext).forEach {
+            drinkNames.add(it.name)
+        }
+
+        m_ocrProcessor = OCRProcessor(applicationContext, drinkNames)
 
         // Get intent extra
         val imageUri = Uri.parse(intent.getStringExtra(EXTRA_IMAGE))
