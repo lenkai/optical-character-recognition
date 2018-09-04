@@ -13,8 +13,8 @@ $delete_others = $_GET["deleteothers"];
 //Attention the following parameter are all! comma-seperated. Don't use commata
 //in any of the values!
 
-//drinks:         1, 4, 5
-$drinks     = explode(",", $_GET["drink_ids"]);
+//drinks:         Bier, Sprite, Fanta
+$drinks     = explode(",", $_GET["drinks"]);
 //quantity_in_ml: 400, 500, 500
 $quantities = explode(",", $_GET["quantities"]);
 //PRICE in cent:  340, 220, 220
@@ -31,6 +31,7 @@ if(is_numeric($bar_id) && is_numeric($bar_password) && is_numeric($delete_others
     $pwstatement = $pdo->prepare("SELECT COUNT(*) As COUNT FROM `bars` WHERE ID = '" . htmlspecialchars($bar_id) . "' AND CHANGE_PASSWORD = '" . htmlspecialchars($bar_password) . "'");
     $pwstatement->execute();
     if($pwstatement->fetch()['COUNT'] == 1){
+
       //delete all pre_existing, if wanted
       if($delete_others == 1){
         $delstatement = $pdo->prepare("DELETE FROM `drinkmenu` WHERE BAR_ID = '" . htmlspecialchars($bar_id) . "'");
@@ -39,7 +40,19 @@ if(is_numeric($bar_id) && is_numeric($bar_password) && is_numeric($delete_others
 
       //iterate through array and add all drinks
       for($iter = 0; $iter < sizeof($drinks); $iter++){
-        $liststatement = $pdo->prepare("INSERT IGNORE INTO `drinkmenu` (BAR_ID, DRINK_ID, PRICE, MILLILITER, DESCRIPTION, LAST_UPDATE) VALUES (" . htmlspecialchars($bar_id) . ", " . htmlspecialchars($drinks[$iter]) . ", " . ($prices[$iter] / 100) . ", " . $quantities[$iter] . ", '" . $description[$iter] . "', '" . date('Y-m-d H:i:s') . "')");
+        //try to get id if exists in database:
+        $reqstatement = $pdo->prepare("SELECT COUNT(*) AS co FROM `drinks` WHERE NAME = '" . $drinks[$iter] . "'");
+        $reqstatement->execute();
+        if($reqstatement->fetch()['co'] == 0){
+          //add the drink automatically, if it doesn't exist
+          $drstatement = $pdo->prepare("INSERT IGNORE INTO `drinks` (NAME, DESCRIPTION) VALUES ('" . $drinks[$iter] . "', '" . $description[$iter] . "')");
+          $drstatement->execute();
+        }
+
+        $reqqstatement = $pdo->prepare("SELECT ID FROM `drinks` WHERE NAME = '" . $drinks[$iter] . "'");
+        $reqqstatement->execute();
+
+        $liststatement = $pdo->prepare("INSERT IGNORE INTO `drinkmenu` (BAR_ID, DRINK_ID, PRICE, MILLILITER, DESCRIPTION, LAST_UPDATE) VALUES (" . htmlspecialchars($bar_id) . ", " . $reqqstatement->fetch()['ID'] . ", " . ($prices[$iter] / 100) . ", " . $quantities[$iter] . ", '" . $description[$iter] . "', '" . date('Y-m-d H:i:s') . "')");
         $liststatement->execute();
       }
 
