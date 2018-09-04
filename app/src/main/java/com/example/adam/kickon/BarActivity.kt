@@ -45,7 +45,7 @@ class BarActivity : Activity() {
 
         Log.d(TAG, "DRINKS!!!!!!!!")
 
-        Tools.getDrinkList(applicationContext).forEach {
+        Tools.getDrinkList().forEach {
             Log.d(TAG, "Drink:  " + it.name)
         }
 
@@ -136,6 +136,7 @@ class BarActivity : Activity() {
                 if (resultCode == Activity.RESULT_OK) {
                     val overviewIntent = Intent(this, BeverageOverviewActivity::class.java).apply {
                         putExtra(EXTRA_IMAGE, m_imageUri.toString())
+                        putExtra(DATABASE_ID, intent.getIntExtra(DATABASE_ID, 0))
                     }
                     startActivityForResult(overviewIntent, OVERVIEW_REQUEST)
                 }

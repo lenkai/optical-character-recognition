@@ -16,19 +16,19 @@ import kotlin.properties.Delegates
  *
  * @property context of the textrecognizer
  */
-class OCRProcessor(val context: Context, val cocktails : ArrayList<String>) {
+class OCRProcessor(val m_context: Context, val m_drinks : Map<String, Int>) {
     // Format of the prices
     private val PRICE_REGEX = "\\d+((,|\\.)\\d{2})?"
     // Topic for the log
     private val TAG = "OCRProcessor"
     // Google Visions textrecognizer
-    private var textRecognizer by Delegates.notNull<TextRecognizer>()
+    private lateinit var textRecognizer : TextRecognizer
 
     /**
      * @brief Initiating the textrecognizer with our context
      */
     init{
-        textRecognizer = TextRecognizer.Builder(context).build()
+        textRecognizer = TextRecognizer.Builder(m_context).build()
     }
 
 
@@ -114,7 +114,7 @@ class OCRProcessor(val context: Context, val cocktails : ArrayList<String>) {
         for (index in 0..(left.size - 1)) {
             val text = left.elementAt(index)
 
-            if(cocktails.contains(text)) {
+            if(m_drinks.keys.contains(text)) {
                 detected_cocktails.add(text)
             }
         }
@@ -139,10 +139,7 @@ class OCRProcessor(val context: Context, val cocktails : ArrayList<String>) {
         }
 
         for (index in 0..(size - 1)) {
-            val beverage = Beverage()
-            beverage.name = detected_cocktails.elementAt(index)
-            beverage.price = detected_prices.elementAt(index)
-            list.add(beverage)
+            list.add(Beverage(m_drinks.get(detected_cocktails.elementAt(index))!!, detected_cocktails.elementAt(index), detected_prices.elementAt(index)))
         }
 
         return list
