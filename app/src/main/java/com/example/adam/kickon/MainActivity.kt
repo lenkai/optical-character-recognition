@@ -11,6 +11,13 @@ import android.widget.ListView
 const val EXTRA_MESSAGE = "com.example.adam.kickon.MESSAGE"
 const val DATABASE_ID = "com.example.adam.kickon.ID"
 
+val PASSWORD_MAP = mapOf<Int, String>(1 to "654545",
+                                                  2 to "765435",
+                                                  3 to "340056",
+                                                  4 to "543451",
+                                                  5 to "226445",
+                                                  6 to "364595")
+
 class MainActivity : Activity() {
 
     private val lastData = mutableMapOf<Int, Bar>()
