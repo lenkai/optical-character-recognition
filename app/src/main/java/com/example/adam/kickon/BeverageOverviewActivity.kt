@@ -39,13 +39,14 @@ class BeverageOverviewActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beverage_overview)
 
-        var drinks = mutableMapOf<String, Int>()
+        val drinks = Tools.getDrinkList()
+        var drink_names = ArrayList<String>(drinks.size)
 
-        Tools.getDrinkList().forEach {
-            drinks[it.name] = it.id
+        for(index in drinks.indices){
+            drink_names.add(drinks[index].name)
         }
 
-        m_ocrProcessor = OCRProcessor(applicationContext, drinks.toMap())
+        m_ocrProcessor = OCRProcessor(applicationContext, drink_names)
 
         // Get intent extra
         val imageUri = Uri.parse(intent.getStringExtra(EXTRA_IMAGE))
@@ -86,7 +87,7 @@ class BeverageOverviewActivity : Activity() {
         Log.d(TAG, Tools.modifyPrices( bar_id.toString(), PASSWORD_MAP[bar_id]!!, m_beverageList).toString())
 
         m_beverageList.forEach {
-            Log.d(TAG,"Cocktail: " + it.name + "\tprice: " + it.price + " €\tid: " + it.id +"\n")
+            Log.d(TAG,"Cocktail: " + it.name + "\tprice: " + it.price + " €\n")
         }
 
         /// Prepare result

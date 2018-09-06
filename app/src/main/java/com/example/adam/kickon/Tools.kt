@@ -122,26 +122,26 @@ class Tools {
          */
         fun modifyPrices(bar_id : String, bar_password : String, beverage_list : List<Beverage>) : Boolean {
 
-            var drink_id_string = ""
+            var drink_name_string = ""
             var prices_string = ""
             var skip_string = ""
             var quantities_string = ""
 
             beverage_list.forEach {
-                drink_id_string += it.id.toString() + ","
+                drink_name_string += it.name + ","
                 prices_string += it.price.toString() + ","
-                quantities_string += "0.33,"
+                quantities_string += "330,"
                 skip_string += ","
             }
 
-            drink_id_string = drink_id_string.dropLast(1)
+            drink_name_string = drink_name_string.dropLast(1)
             prices_string = prices_string.dropLast(1)
             quantities_string = quantities_string.dropLast(1)
             skip_string = skip_string.dropLast(1)
-            
+
             try {
 
-                val obj = URL("https://lennartkaiser.de/ocr/modify_prices.php?barid=" + bar_id + "&password=" + bar_password + "&deleteothers=1&drink_ids=" + drink_id_string + "&quantities=" + quantities_string + "&prices=" + prices_string + "&description=" + skip_string)
+                val obj = URL("https://lennartkaiser.de/ocr/modify_prices_by_names.php?barid=" + bar_id + "&password=" + bar_password + "&deleteothers=1&drinks=" + drink_name_string + "&quantities=" + quantities_string + "&prices=" + prices_string + "&description=" + skip_string)
                 val response = StringBuffer()
 
                 with(obj.openConnection() as HttpURLConnection) {

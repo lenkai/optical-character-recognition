@@ -16,7 +16,7 @@ import kotlin.properties.Delegates
  *
  * @property context of the textrecognizer
  */
-class OCRProcessor(val m_context: Context, val m_drinks : Map<String, Int>) {
+class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     // Format of the prices
     private val PRICE_REGEX = "\\d+((,|\\.)\\d{2})?"
     // Topic for the log
@@ -114,7 +114,7 @@ class OCRProcessor(val m_context: Context, val m_drinks : Map<String, Int>) {
         for (index in 0..(left.size - 1)) {
             val text = left.elementAt(index)
 
-            if(m_drinks.keys.contains(text)) {
+            if(m_drinks.contains(text)) {
                 detected_cocktails.add(text)
             }
         }
@@ -139,7 +139,7 @@ class OCRProcessor(val m_context: Context, val m_drinks : Map<String, Int>) {
         }
 
         for (index in 0..(size - 1)) {
-            list.add(Beverage(m_drinks.get(detected_cocktails.elementAt(index))!!, detected_cocktails.elementAt(index), detected_prices.elementAt(index)))
+            list.add(Beverage(detected_cocktails.elementAt(index), detected_prices.elementAt(index)))
         }
 
         return list
