@@ -38,7 +38,15 @@ class BeverageOverviewActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beverage_overview)
-        m_ocrProcessor = OCRProcessor(applicationContext)
+
+        val drinks = Tools.getDrinkList()
+        var drink_names = ArrayList<String>(drinks.size)
+
+        for(index in drinks.indices){
+            drink_names.add(drinks[index].name)
+        }
+
+        m_ocrProcessor = OCRProcessor(applicationContext, drink_names)
 
         // Get intent extra
         val imageUri = Uri.parse(intent.getStringExtra(EXTRA_IMAGE))
@@ -73,9 +81,11 @@ class BeverageOverviewActivity : Activity() {
      * @brief Finishing this activity with "OK" status and saving the beverage list
      */
     fun onConfirm(view : View) {
-        /// TODO: Saving beverage list in the database
+        /// Send the beverage list to the database
 
-        // Do something with the results
+        val bar_id = intent.getIntExtra(DATABASE_ID, 0)
+        Log.d(TAG, Tools.modifyPrices( bar_id.toString(), PASSWORD_MAP[bar_id]!!, m_beverageList).toString())
+
         m_beverageList.forEach {
             Log.d(TAG,"Cocktail: " + it.name + "\tprice: " + it.price + " €\n")
         }

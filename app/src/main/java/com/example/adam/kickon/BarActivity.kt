@@ -44,11 +44,18 @@ class BarActivity : Activity() {
             text = buttonText
         }
         m_cameraButton = findViewById<Button>(R.id.uploadBeverageList)
-
+      
         //change style of rating bar
         val ratingBar = findViewById<RatingBar>(R.id.rating_bar)
         val stars = ratingBar.getProgressDrawable()
         stars.setTint(Color.WHITE)
+        /*
+        Log.d(TAG, "DRINKS!!!!!!!!")
+
+        Tools.getDrinkList().forEach {
+            Log.d(TAG, "Drink:  " + it.name)
+        }
+        */
 
         Thread {
             //image view:
@@ -207,6 +214,7 @@ class BarActivity : Activity() {
                 if (resultCode == Activity.RESULT_OK) {
                     val overviewIntent = Intent(this, BeverageOverviewActivity::class.java).apply {
                         putExtra(EXTRA_IMAGE, m_imageUri.toString())
+                        putExtra(DATABASE_ID, intent.getIntExtra(DATABASE_ID, 0))
                     }
                     startActivityForResult(overviewIntent, OVERVIEW_REQUEST)
                 }

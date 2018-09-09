@@ -16,23 +16,22 @@ import kotlin.properties.Delegates
  *
  * @property context of the textrecognizer
  */
-class OCRProcessor(context: Context) {
+class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     // Format of the prices
     private val PRICE_REGEX = "\\d+((,|\\.)\\d{2})?"
     // Topic for the log
     private val TAG = "OCRProcessor"
-    // Hard coded "database"
-    private val cocktails = listOf<String>("Havana Club", "Long Island Iced Tea", "Zombie")
-
     // Google Visions textrecognizer
-    private var textRecognizer by Delegates.notNull<TextRecognizer>()
+    private lateinit var textRecognizer : TextRecognizer
 
     /**
      * @brief Initiating the textrecognizer with our context
      */
     init{
-        textRecognizer = TextRecognizer.Builder(context).build()
+        textRecognizer = TextRecognizer.Builder(m_context).build()
     }
+
+
 
     /**
      * @brief Detects cocktails and prices an a given bitmap
@@ -75,24 +74,6 @@ class OCRProcessor(context: Context) {
 
         /// Sort textblocks into left (possible cocktails) and right (possible prices)
 
-        /*val left = mutableListOf<String>()
-        val right = mutableListOf<String>()
-
-        for (index in 0..(textBlocks.size() - 1)) {
-            val x_value = textBlocks.valueAt(index).boundingBox.centerX()
-
-            if(abs(x_value - min) < abs(x_value - max)) {
-                textBlocks.valueAt(index).components.forEach {
-                    left.add(it.value.replace("\n", ""))
-                }
-            }
-            else{
-                textBlocks.valueAt(index).components.forEach {
-                    right.add(it.value.replace("\n", "").replace("E", "").replace("€", "").replace(" ", ""))
-                }
-            }
-        }*/
-
         var left_blocks = mutableListOf<TextBlock>()
         var right_blocks = mutableListOf<TextBlock>()
 
@@ -133,7 +114,7 @@ class OCRProcessor(context: Context) {
         for (index in 0..(left.size - 1)) {
             val text = left.elementAt(index)
 
-            if(cocktails.contains(text)) {
+            if(m_drinks.contains(text)) {
                 detected_cocktails.add(text)
             }
         }
@@ -158,10 +139,7 @@ class OCRProcessor(context: Context) {
         }
 
         for (index in 0..(size - 1)) {
-            val beverage = Beverage()
-            beverage.name = detected_cocktails.elementAt(index)
-            beverage.price = detected_prices.elementAt(index)
-            list.add(beverage)
+            list.add(Beverage(detected_cocktails.elementAt(index), detected_prices.elementAt(index)))
         }
 
         return list
