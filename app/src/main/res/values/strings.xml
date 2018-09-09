@@ -1,12 +1,26 @@
 <resources>
     <string name="app_name">KickOn</string>
-    <string name="bar_search">Suche nach einer Bar ...</string>
+    <string name="bar_search">Suche nach einer Bar …</string>
     <string name="title_activity_bar">BarActivity</string>
     <string name="upload_price_list">Getränkekarte Hochladen</string>
-    <string name="bar_vicinity">Bars in deiner Nähe ...</string>
+    <string name="bar_vicinity">Bars in deiner Nähe …</string>
     <string name="picture_description">Picture for OCR</string>
     <string name="beverage_confirm">Confirm</string>
     <string name="list_beverage">Beverage:</string>
     <string name="list_price">Price:</string>
     <string name="list_price_unit">€</string>
+    <string name="beschreibung">Beschreibung</string>
+    <string name="ffnungszeiten">Öffnungszeiten</string>
+    <string name="getr_nke">Getränke</string>
+    <string name="description">Schließt um %1$s</string>
+    <string name="example_adress">Teststraße 1, Osnabrück</string>
+    <string name="adresse">Adresse</string>
+    <string name="ausstattung">Ausstattung</string>
+    <string name="example_value">XYZ</string>
+    <string name="website">Website</string>
+    <string name="overview_image">Overview Image</string>
+    <string name="musterbar_1">Musterbar 1</string>
+    <string name="schlie_t_um_3_00">schließt um 3:00</string>
+    <string name="example_description">Beispielbeschreibung. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</string>
+    <string name="example_prices">123\\n456\\n789\\n123\\n456\\n789\\n123\\n456\\n789\\n</string>
 </resources>

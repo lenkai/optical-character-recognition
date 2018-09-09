@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
 import kotlin.properties.Delegates
 
@@ -42,25 +44,101 @@ class BarActivity : Activity() {
             text = buttonText
         }
         m_cameraButton = findViewById<Button>(R.id.uploadBeverageList)
-
+      
+        //change style of rating bar
+        val ratingBar = findViewById<RatingBar>(R.id.rating_bar)
+        val stars = ratingBar.getProgressDrawable()
+        stars.setTint(Color.WHITE)
+        /*
         Log.d(TAG, "DRINKS!!!!!!!!")
 
         Tools.getDrinkList().forEach {
             Log.d(TAG, "Drink:  " + it.name)
         }
+        */
 
         Thread {
             //image view:
             val result = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/bar_details.php?barid=" + intent.getIntExtra(DATABASE_ID, 0))
 
-            val imgBox = findViewById(R.id.imageView2) as ImageView
-            val img = Tools.loadImageFromUrl(result.getJSONObject(0).getJSONArray("images_urls").getString(0), this)
+            //get features from array
+            var features = ""
+            for (i in  0 ..  result.getJSONObject(0).getJSONArray("features").length() - 1){
+
+                features += result.getJSONObject(0).getJSONArray("features").getString(i) + "\n"
+            }
+
+            //get drinks (extra json file)
+            val drinkResult = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/list_prices.php?barid=" + intent.getIntExtra(DATABASE_ID, 0))
+
+            //parse array
+            var drinks = ""
+            for (i in  0 ..  drinkResult.length() - 1){
+                val drink = drinkResult.getJSONObject(i)
+                val formatted = String.format("%.2f", drink.getDouble("price"))
+
+                drinks += formatted + "€\t\t" + drink.getString("name") + "\n"
+            }
+
+            //set the corresponding values in the Textview Boxes
             runOnUiThread {
-                try {
-                    imgBox.setImageDrawable(img)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    imgBox.setImageResource(R.drawable.noimage)
+                findViewById<TextView>(R.id.opening_time).apply {
+                    text = getString(R.string.description, result.getJSONObject(0).getString("closing_time"))
+                }
+
+                findViewById<TextView>(R.id.description).apply {
+                    text = result.getJSONObject(0).getString("description")
+                }
+
+                findViewById<TextView>(R.id.adress).apply {
+                    text = result.getJSONObject(0).getString("adress")
+                }
+
+                findViewById<TextView>(R.id.website_url).apply {
+                    text = result.getJSONObject(0).getString("website")
+                }
+
+                findViewById<RatingBar>(R.id.rating_bar).apply {
+                    rating = result.getJSONObject(0).getDouble("rating").toFloat()
+                }
+
+                findViewById<TextView>(R.id.features).apply {
+                    text = features
+                }
+
+                findViewById<TextView>(R.id.drinks).apply {
+                    text = drinks
+                }
+
+                //website url open browser
+                findViewById<TextView>(R.id.website_url).setOnClickListener {
+                    val openURL = Intent(Intent.ACTION_VIEW, Uri.parse(result.getJSONObject(0).getString("website")))
+                    startActivity(openURL)
+                }
+
+                //tab on adress navigation
+
+                findViewById<TextView>(R.id.adress).setOnClickListener {
+                    val gmmIntentUri = Uri.parse("geo:0,0?q=" + result.getJSONObject(0).getString("adress"))
+                    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+                    mapIntent.setPackage("com.google.android.apps.maps")
+                    startActivity(mapIntent)
+                }
+
+            }
+
+
+
+            if(result.getJSONObject(0).getJSONArray("images_urls").length() >= 1) {
+                val imgBox = findViewById(R.id.imageView2) as ImageView
+                val img = Tools.loadImageFromUrl(result.getJSONObject(0).getJSONArray("images_urls").getString(0), this)
+                runOnUiThread {
+                    try {
+                        imgBox.setImageDrawable(img)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        imgBox.setImageResource(R.drawable.noimage)
+                    }
                 }
             }
         }.start()
