@@ -3,6 +3,7 @@ package com.example.adam.kickon
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v4.content.ContextCompat
+import android.widget.Toast
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -120,7 +121,7 @@ class Tools {
         /**
          *  Sending beverage list to the database server
          */
-        fun modifyPrices(bar_id : String, bar_password : String, beverage_list : List<Beverage>) : Boolean {
+        fun modifyPrices(bar_id : String, bar_password : String, beverage_list : List<Beverage>, del_others : Boolean) : Boolean {
 
             var drink_name_string = ""
             var prices_string = ""
@@ -129,7 +130,8 @@ class Tools {
 
             beverage_list.forEach {
                 drink_name_string += it.name + ","
-                prices_string += it.price.toString() + ","
+                //change from euro to cent (no decimal point)
+                prices_string += (it.price * 100).toString() + ","
                 quantities_string += "330,"
                 skip_string += ","
             }
@@ -139,9 +141,14 @@ class Tools {
             quantities_string = quantities_string.dropLast(1)
             skip_string = skip_string.dropLast(1)
 
+            var del = "0"
+            if(del_others){
+                del = "1"
+            }
+
             try {
 
-                val obj = URL("https://lennartkaiser.de/ocr/modify_prices_by_names.php?barid=" + bar_id + "&password=" + bar_password + "&deleteothers=1&drinks=" + drink_name_string + "&quantities=" + quantities_string + "&prices=" + prices_string + "&description=" + skip_string)
+                val obj = URL("https://lennartkaiser.de/ocr/modify_prices_by_names.php?barid=" + bar_id + "&password=" + bar_password + "&deleteothers=" + del + "&drinks=" + drink_name_string + "&quantities=" + quantities_string + "&prices=" + prices_string + "&description=" + skip_string)
                 val response = StringBuffer()
 
                 with(obj.openConnection() as HttpURLConnection) {
@@ -160,7 +167,11 @@ class Tools {
                         println(response.toString())
                     }
                 }
-
+                if(response.contains("OK")){
+                    Toast.makeText(MainActivity.applicationContext(), R.string.drinks_added_success, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(MainActivity.applicationContext(), R.string.drinks_added_failure, Toast.LENGTH_SHORT).show()
+                }
                 return response.contains("OK")
             } catch (e: JSONException) {
                 e.printStackTrace()

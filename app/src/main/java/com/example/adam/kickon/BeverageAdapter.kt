@@ -144,7 +144,8 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
          * @brief Updating the logical representation based on the visualization
          */
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            m_beverageList[m_position].price = s.toString().toDouble()
+            if(s.toString().length > 0)
+                m_beverageList[m_position].price = s.toString().toDouble()
         }
     }
 

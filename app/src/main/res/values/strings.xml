@@ -23,4 +23,13 @@
     <string name="schlie_t_um_3_00">schließt um 3:00</string>
     <string name="example_description">Beispielbeschreibung. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</string>
     <string name="example_prices">123\\n456\\n789\\n123\\n456\\n789\\n123\\n456\\n789\\n</string>
+    <string name="password_promt">Passwort eingeben:</string>
+    <string name="cancel">Abbruch</string>
+    <string name="drinks_added_success">Drinks hinzugefügt!</string>
+    <string name="drinks_added_failure">Fehler!</string>
+    <string name="getr_nk">Getränk</string>
+    <string name="example_price">1,00</string>
+    <string name="delete_drink_button">Delete Drink Button</string>
+    <string name="share_bar">Button to share bar</string>
+    <string name="delete_other_drinks">Bestehende Getränke löschen</string>
 </resources>

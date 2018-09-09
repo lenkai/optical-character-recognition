@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
+import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -57,6 +58,16 @@ class BarActivity : Activity() {
         }
         */
 
+        findViewById<SwipeRefreshLayout>(R.id.pullToRefresh).setOnRefreshListener {
+            //Toast.makeText(this, "refresh", Toast.LENGTH_SHORT).show()
+            updateDetails()
+            findViewById<SwipeRefreshLayout>(R.id.pullToRefresh).isRefreshing = false
+        }
+
+        updateDetails()
+    }
+
+    private fun updateDetails() {
         Thread {
             //image view:
             val result = Tools.loadJSONfromUrl("https://lennartkaiser.de/ocr/bar_details.php?barid=" + intent.getIntExtra(DATABASE_ID, 0))
@@ -127,8 +138,6 @@ class BarActivity : Activity() {
 
             }
 
-
-
             if(result.getJSONObject(0).getJSONArray("images_urls").length() >= 1) {
                 val imgBox = findViewById(R.id.imageView2) as ImageView
                 val img = Tools.loadImageFromUrl(result.getJSONObject(0).getJSONArray("images_urls").getString(0), this)
@@ -143,7 +152,7 @@ class BarActivity : Activity() {
             }
         }.start()
     }
-  
+
     /**
      * @brief Called when this activity was started
      */

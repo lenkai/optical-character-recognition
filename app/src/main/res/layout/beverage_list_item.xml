@@ -2,7 +2,6 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:padding="6dp">
@@ -16,7 +15,9 @@
         android:layout_marginStart="20dp"
         android:background="@color/common_google_signin_btn_text_dark_default"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:hint="@string/getr_nk"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/editPrice"
@@ -27,7 +28,9 @@
         android:layout_marginEnd="82dp"
         android:background="@color/common_google_signin_btn_text_dark_default"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:hint="@string/example_price"
+        android:inputType="numberDecimal" />
 
     <TextView
         android:id="@+id/textPriceUnit"
@@ -48,6 +51,6 @@
         android:layout_marginStart="-60dp"
         android:layout_marginTop="-10dp"
         android:layout_toEndOf="@+id/textPriceUnit"
+        android:contentDescription="@string/delete_drink_button"
         app:srcCompat="@android:drawable/ic_delete" />
-
 </RelativeLayout>
