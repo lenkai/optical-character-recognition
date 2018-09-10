@@ -23,4 +23,6 @@
     <string name="schlie_t_um_3_00">schließt um 3:00</string>
     <string name="example_description">Beispielbeschreibung. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</string>
     <string name="example_prices">123\\n456\\n789\\n123\\n456\\n789\\n123\\n456\\n789\\n</string>
+    <string name="bar_name">Bar</string>
+    <string name="rating">Bewertung</string>
 </resources>

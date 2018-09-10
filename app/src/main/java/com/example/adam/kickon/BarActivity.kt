@@ -190,12 +190,60 @@ class BarActivity : Activity() {
     }
 
     /**
-     * @brief Shares the predefined text when the share button is pressed
+     * @brief Encapsulates the creation of the sharing information
+     *
+     * @property builder Comfortable storing and appending of text for sharing
+     */
+    inner class ShareOrganizer{
+        private val builder : StringBuilder
+
+        init{
+            builder = StringBuilder()
+        }
+
+        /**
+         * @brief Adds the specific topic to the text, which should be shared
+         *
+         * @param topic, which should be shared
+         * @param value of the topic
+         */
+        fun add(topic : String, value : String){
+            if(builder.length != 0){
+                builder.append("\n\n")
+            }
+
+            builder.append(topic)
+            builder.append(": ")
+            builder.append(value)
+        }
+
+        /**
+         * @brief Returns text, which should be shared
+         */
+        override fun toString(): String {
+            return builder.toString()
+        }
+    }
+
+    /**
+     * @brief Shares the characteristics of a bar
      */
     fun onShare(view: View) {
         val sendIntent = Intent()
         sendIntent.action = Intent.ACTION_SEND
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "SHARE TEST.")
+
+        val organizer = ShareOrganizer()
+
+        organizer.add(getString(R.string.bar_name), findViewById<TextView>(R.id.barText).text.toString())
+        organizer.add(getString(R.string.ffnungszeiten), findViewById<TextView>(R.id.opening_time).text.toString())
+        organizer.add(getString(R.string.beschreibung), findViewById<TextView>(R.id.description).text.toString())
+        organizer.add(getString(R.string.adresse), findViewById<TextView>(R.id.adress).text.toString())
+        organizer.add(getString(R.string.website), findViewById<TextView>(R.id.website_url).text.toString())
+        organizer.add(getString(R.string.rating), findViewById<RatingBar>(R.id.rating_bar).rating.toString())
+        organizer.add(getString(R.string.ausstattung), findViewById<TextView>(R.id.features).text.toString())
+        organizer.add(getString(R.string.getr_nke), findViewById<TextView>(R.id.drinks).text.toString())
+
+        sendIntent.putExtra(Intent.EXTRA_TEXT, organizer.toString())//"SHARE TEST.")
         sendIntent.type = "text/plain"
         startActivity(sendIntent)
     }
