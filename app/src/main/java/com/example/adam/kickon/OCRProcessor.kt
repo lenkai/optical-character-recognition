@@ -2,6 +2,7 @@ package com.example.adam.kickon
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.text.TextBlock
@@ -18,7 +19,7 @@ import kotlin.properties.Delegates
  */
 class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     // Format of the prices
-    private val PRICE_REGEX = "\\d+((,|\\.)\\d{2})?"
+    private val PRICE_REGEX = "\\d+((,|\\.)(\\d)*)?" // "\\d+((,|\\.)\\d{2})?"
     // Topic for the log
     private val TAG = "OCRProcessor"
     // Google Visions textrecognizer
@@ -72,7 +73,7 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
             }
         }
 
-        /// Sort textblocks into left (possible cocktails) and right (possible prices)
+        /// Sort textblocks into left (possible cocktails) and right (possible prices nd liters)
 
         var left_blocks = mutableListOf<TextBlock>()
         var right_blocks = mutableListOf<TextBlock>()
@@ -88,11 +89,50 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
             }
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        min = Int.MAX_VALUE
+        max = Int.MIN_VALUE
+
+        for (index in 0..(right_blocks.size - 1)) {
+
+            val x_value = right_blocks[index].boundingBox.centerX()
+
+            if(min > x_value){
+                min = x_value
+            }
+
+            if(max < x_value){
+                max = x_value
+            }
+        }
+
+        /// Sort textblocks into left (possible liters) and right (possible prices)
+
+        var liter_blocks = mutableListOf<TextBlock>()
+        var price_blocks = mutableListOf<TextBlock>()
+
+        for (index in 0..(right_blocks.size - 1)) {
+            val x_value = right_blocks[index].boundingBox.centerX()
+
+            if(abs(x_value - min) < abs(x_value - max)) {
+                liter_blocks.add(right_blocks[index])
+            }
+            else{
+                price_blocks.add(right_blocks[index])
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////7
+
         left_blocks = sortSide(left_blocks)
-        right_blocks = sortSide(right_blocks)
+        price_blocks = sortSide(price_blocks)
+        liter_blocks = sortSide(liter_blocks)
+
 
         val left = mutableListOf<String>()
-        val right = mutableListOf<String>()
+        val prices = mutableListOf<String>()
+        val liters = mutableListOf<String>()
 
         left_blocks.forEach {
             it.components.forEach {
@@ -100,9 +140,15 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
             }
         }
 
-        right_blocks.forEach {
+        price_blocks.forEach {
             it.components.forEach {
-                right.add(it.value.replace("\n", "").replace("E", "").replace("€", "").replace(" ", ""))
+                prices.add(it.value.replace("\n", "").replace("E", "").replace("€", "").replace(" ", ""))
+            }
+        }
+
+        liter_blocks.forEach {
+            it.components.forEach {
+                liters.add(it.value.replace("\n", "").replace(" ", "").replace("cl", "").replace("l", ""))
             }
         }
 
@@ -110,6 +156,7 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
 
         val detected_cocktails = mutableListOf<String>()
         val detected_prices = mutableListOf<Double>()
+        val detected_liters = mutableListOf<Double>()
 
         for (index in 0..(left.size - 1)) {
             val text = left.elementAt(index)
@@ -119,8 +166,22 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
             }
         }
 
-        for(index in 0..(right.size - 1)) {
-            val text = right.elementAt(index).split(" ").last()
+        for(index in 0..(liters.size - 1)) {
+            val split = liters.elementAt(index).split(" ")
+
+            if(split.size > 1) {
+                prices.add(split.last())
+            }
+
+            val text = split.first()
+
+            if(Pattern.matches(PRICE_REGEX, text)) {
+                detected_liters.add(text.replace(",", ".").toDouble())
+            }
+        }
+
+        for(index in 0..(prices.size - 1)) {
+            val text = prices.elementAt(index)
             if(Pattern.matches(PRICE_REGEX, text)) {
                 detected_prices.add(text.replace(",", ".").toDouble())
             }
@@ -128,7 +189,7 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
 
         /// Store cocktail with belonging price in a map
 
-        val size : Int
+        var size : Int
         val list = mutableListOf<Beverage>()
 
         if(detected_cocktails.size <= detected_prices.size) {
@@ -138,8 +199,12 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
             size = detected_prices.size
         }
 
+        if(detected_liters.size < size){
+            size = detected_liters.size
+        }
+
         for (index in 0..(size - 1)) {
-            list.add(Beverage(detected_cocktails.elementAt(index), detected_prices.elementAt(index)))
+            list.add(Beverage(detected_cocktails.elementAt(index), detected_prices.elementAt(index), detected_liters.elementAt(index)))
         }
 
         return list
