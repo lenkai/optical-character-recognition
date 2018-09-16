@@ -135,7 +135,7 @@ class BeverageOverviewActivity : Activity() {
      * @brief Adding a default beverage to the beverage list
      */
     fun addBeverage(view : View) {
-        m_beverageList.add(m_beverageList.size, Beverage())
+        m_beverageList.add(m_beverageList.size, Beverage(getString(R.string.getr_nk, getString(R.string.example_price).replace(",", ".").toDouble())))
         m_viewAdapter.notifyDataSetChanged()
     }
 }

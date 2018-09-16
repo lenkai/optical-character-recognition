@@ -14,11 +14,16 @@ import android.widget.ImageButton
  */
 class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder> {
 
+    private val PRICE_REGEX = "\\d+((,|\\.)(\\d)*)?"
+
     // Logical representing of out bevereage list
     private var m_beverageList : MutableList<Beverage>
 
+    private val m_regex : Regex
+
     constructor(beverageMap: MutableList<Beverage>) {
         m_beverageList = beverageMap
+        m_regex = Regex(PRICE_REGEX)
     }
 
     constructor() : this(mutableListOf<Beverage>())
@@ -76,7 +81,7 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
             m_beverageListener = BeverageListener()
             beverage.addTextChangedListener(m_beverageListener)
             price = view.findViewById(R.id.editPrice)
-            m_priceListener = PriceListener()
+            m_priceListener = PriceListener(price)
             price.addTextChangedListener(m_priceListener)
             deleteButton = view.findViewById(R.id.deleteButton)
             m_deleteListener = DeleteListener()
@@ -139,13 +144,26 @@ class BeverageAdapter : RecyclerView.Adapter<BeverageAdapter.BeverageViewHolder>
     /**
      * @brief Updating the price of the beverages based of the visualization
      */
-    private inner class PriceListener : BeverageListener() {
+    private inner class PriceListener(val m_editText : EditText) : BeverageListener() {
+
         /**
          * @brief Updating the logical representation based on the visualization
          */
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            if(s.toString().length > 0)
-                m_beverageList[m_position].price = s.toString().toDouble()
+            val new_text = s.toString().replace(",", ".")
+
+            if(s.toString().length > 0) {
+                if(m_regex.matches(new_text)) {
+                    m_beverageList[m_position].price = new_text.toDouble()
+                }
+                else {
+                    m_beverageList[m_position].price = m_editText.hint.toString().replace(",", ".").toDouble()
+                    m_editText.setText("")
+                }
+            }
+            else {
+                m_beverageList[m_position].price = m_editText.hint.toString().replace(",", ".").toDouble()
+            }
         }
     }
 
