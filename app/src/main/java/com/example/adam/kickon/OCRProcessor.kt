@@ -20,6 +20,7 @@ import java.util.regex.Pattern
 class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     // Format of the prices
     private val PRICE_REGEX = "\\d+((,|\\.)(\\d)*)?" // "\\d+((,|\\.)\\d{2})?"
+    private val ROTATION_ANGLE = 90.0F
     // Topic for the log
     private val TAG = "OCRProcessor"
     // Google Visions textrecognizer
@@ -55,12 +56,14 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
         var rotatedBitmap = bitmap
         val matrix = Matrix()
 
-        matrix.postRotate(90.0F)
+        matrix.postRotate(ROTATION_ANGLE)
 
         if(beverage_list.size == 0) {
 
-            for (count in 1..3) {
+            for (count in 1 .. (360.0F / ROTATION_ANGLE - 0.5).toInt()) {
+                val oldRotatedBitmap = rotatedBitmap
                 rotatedBitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), matrix, true)
+                oldRotatedBitmap.recycle()
 
                 val new_textblocks = m_textRecognizer.detect(Frame.Builder().setBitmap(rotatedBitmap).build())
                 val new_beverage_list = analyseText(new_textblocks)
@@ -70,6 +73,8 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
                     beverage_list = new_beverage_list
                     break
                 }
+
+                Log.d(TAG, count.toString())
             }
         }
 

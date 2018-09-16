@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
  */
 class BeverageOverviewActivity : Activity() {
 
-    private var TAG = "BEVERAGE_OVERVIEW"
+    private val TAG = "BEVERAGE_OVERVIEW"
 
     private lateinit var m_recyclerView: RecyclerView
     private lateinit var m_viewAdapter: RecyclerView.Adapter<*>
