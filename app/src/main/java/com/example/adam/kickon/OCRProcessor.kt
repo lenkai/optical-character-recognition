@@ -9,7 +9,6 @@ import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
 import java.lang.Math.abs
 import java.util.regex.Pattern
-import kotlin.properties.Delegates
 
 /**
  * @brief Encapsultes the required classes and functions of the google vision api,
@@ -23,13 +22,18 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     // Topic for the log
     private val TAG = "OCRProcessor"
     // Google Visions textrecognizer
-    private lateinit var textRecognizer : TextRecognizer
+    private lateinit var m_textRecognizer : TextRecognizer
 
     /**
      * @brief Initiating the textrecognizer with our context
      */
     init{
-        textRecognizer = TextRecognizer.Builder(m_context).build()
+        m_textRecognizer = TextRecognizer.Builder(m_context).build()
+
+        // Was the initialization of the textrecognizer successful
+        if(!m_textRecognizer.isOperational()) {
+            Log.w(TAG, "Detector dependencies are not yet available.");
+        }
     }
 
 
@@ -44,7 +48,7 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     fun detectFrom(bitmap : Bitmap) : MutableList<Beverage> {
         val frame = Frame.Builder().setBitmap(bitmap).build()
         // Do OCR
-        return analyseText(textRecognizer.detect(frame))
+        return analyseText(m_textRecognizer.detect(frame))
     }
 
     /**
@@ -55,79 +59,21 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
      * @return map with cocktails (Strings) as keys and there prices (Doubles) as values
      */
     private fun analyseText(textBlocks: SparseArray<TextBlock>) : MutableList<Beverage> {
-        /// Emit left and right border
+        var textblock_list = mutableListOf<TextBlock>()
 
-        var min = Int.MAX_VALUE
-        var max = Int.MIN_VALUE
-
-        for (index in 0..(textBlocks.size() - 1)) {
-
-            val x_value = textBlocks.valueAt(index).boundingBox.centerX()
-
-            if(min > x_value){
-                min = x_value
-            }
-
-            if(max < x_value){
-                max = x_value
-            }
+        // Transform to list
+        for(index in 0 .. textBlocks.size() - 1) {
+            textblock_list.add(textBlocks.valueAt(index))
         }
 
-        /// Sort textblocks into left (possible cocktails) and right (possible prices nd liters)
+        /// Sort to left side (cocktail) and right side (amount and prices)
 
-        var left_blocks = mutableListOf<TextBlock>()
-        var right_blocks = mutableListOf<TextBlock>()
+        val left_right = sortLeftRight(textblock_list)
+        val left_blocks = sortSide(left_right.first)
 
-        for (index in 0..(textBlocks.size() - 1)) {
-            val x_value = textBlocks.valueAt(index).boundingBox.centerX()
-
-            if(abs(x_value - min) < abs(x_value - max)) {
-                left_blocks.add(textBlocks.valueAt(index))
-            }
-            else{
-                right_blocks.add(textBlocks.valueAt(index))
-            }
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-
-        min = Int.MAX_VALUE
-        max = Int.MIN_VALUE
-
-        for (index in 0..(right_blocks.size - 1)) {
-
-            val x_value = right_blocks[index].boundingBox.centerX()
-
-            if(min > x_value){
-                min = x_value
-            }
-
-            if(max < x_value){
-                max = x_value
-            }
-        }
-
-        /// Sort textblocks into left (possible liters) and right (possible prices)
-
-        var liter_blocks = mutableListOf<TextBlock>()
-        var price_blocks = mutableListOf<TextBlock>()
-
-        for (index in 0..(right_blocks.size - 1)) {
-            val x_value = right_blocks[index].boundingBox.centerX()
-
-            if(abs(x_value - min) < abs(x_value - max)) {
-                liter_blocks.add(right_blocks[index])
-            }
-            else{
-                price_blocks.add(right_blocks[index])
-            }
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////7
-
-        left_blocks = sortSide(left_blocks)
-        price_blocks = sortSide(price_blocks)
-        liter_blocks = sortSide(liter_blocks)
+        val price_liter = sortLeftRight(left_right.second)
+        val price_blocks = sortSide(price_liter.second)
+        val liter_blocks = sortSide(price_liter.first)
 
 
         val left = mutableListOf<String>()
@@ -208,6 +154,60 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
         }
 
         return list
+    }
+
+    /**
+     * @brief Finding the minmum and maxiumum x-coordinate of a list of textblocks
+     *
+     * @param textBlocks List of textblocks in which the minimum and maximum x-coordinate should be found
+     *
+     * @return Pair, which first value is the minimum and second value the maximum x-coordinate
+     */
+    private fun minMaxVertical(textBlocks : List<TextBlock>) : Pair<Int, Int> {
+        var min = Int.MAX_VALUE
+        var max = Int.MIN_VALUE
+
+        for (index in 0..(textBlocks.size - 1)) {
+
+            val x_value = textBlocks[index].boundingBox.centerX()
+
+            if(min > x_value){
+                min = x_value
+            }
+
+            if(max < x_value){
+                max = x_value
+            }
+        }
+
+        return Pair(min, max)
+    }
+
+    /**
+     * @brief Sort the given list of textblocks into the left and right side,
+     *
+     * @param textBlocks which should be sorted
+     *
+     * @return Pair, which first value is the left side and second value is the right side
+     */
+    private fun sortLeftRight(textBlocks : List<TextBlock>) : Pair<MutableList<TextBlock>, MutableList<TextBlock>> {
+        var left_blocks = mutableListOf<TextBlock>()
+        var right_blocks = mutableListOf<TextBlock>()
+
+        val min_max = minMaxVertical(textBlocks)
+
+        for (index in 0..(textBlocks.size - 1)) {
+            val x_value = textBlocks[index].boundingBox.centerX()
+
+            if(abs(x_value - min_max.first) < abs(x_value - min_max.second)) {
+                left_blocks.add(textBlocks[index])
+            }
+            else{
+                right_blocks.add(textBlocks[index])
+            }
+        }
+
+        return Pair(left_blocks, right_blocks)
     }
 
     /**
