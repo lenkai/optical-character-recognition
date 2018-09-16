@@ -5,7 +5,9 @@ package com.example.adam.kickon
  *
  * @property name of the beverage
  * @property price of the beverage
+ * @property amount of the beverage in liter
  */
 class Beverage (
     var name : String = "",
-    var price : Double = 0.0)
+    var price : Double = 0.0,
+    var amount : Double = 0.33)
