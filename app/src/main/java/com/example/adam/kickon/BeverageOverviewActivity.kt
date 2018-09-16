@@ -1,7 +1,9 @@
 package com.example.adam.kickon
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.net.Uri
@@ -9,9 +11,14 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.text.InputType
 import android.util.Log
 import android.view.View
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.LinearLayout
 import kotlin.properties.Delegates
+
 
 /**
  * @brief Detects the items of a beverage card (given by image)
@@ -40,7 +47,7 @@ class BeverageOverviewActivity : Activity() {
         setContentView(R.layout.activity_beverage_overview)
 
         val drinks = Tools.getDrinkList()
-        var drink_names = ArrayList<String>(drinks.size)
+        val drink_names = ArrayList<String>(drinks.size)
 
         for(index in drinks.indices){
             drink_names.add(drinks[index].name)
@@ -53,7 +60,7 @@ class BeverageOverviewActivity : Activity() {
 
         /// Correct rotation of the picture
 
-        var matrix = Matrix()
+        val matrix = Matrix()
         matrix.postRotate(90.0F)
         // Get Bitmap from imageuri
         val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
@@ -81,20 +88,47 @@ class BeverageOverviewActivity : Activity() {
      * @brief Finishing this activity with "OK" status and saving the beverage list
      */
     fun onConfirm(view : View) {
-        /// Send the beverage list to the database
+        // Send the beverage list to the database
 
         val bar_id = intent.getIntExtra(DATABASE_ID, 0)
-        Log.d(TAG, Tools.modifyPrices( bar_id.toString(), PASSWORD_MAP[bar_id]!!, m_beverageList).toString())
 
-        m_beverageList.forEach {
-            Log.d(TAG,"Cocktail: " + it.name + "\tprice: " + it.price + " €\n")
+        val alert = AlertDialog.Builder(this)
+        alert.setTitle(R.string.password_promt)
+
+        val layout = LinearLayout(this)
+        layout.orientation = LinearLayout.VERTICAL
+
+
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_NUMBER
+        input.setRawInputType(Configuration.KEYBOARD_12KEY)
+        layout.addView(input)
+
+        val del_others = CheckBox(this)
+        del_others.text = getString(R.string.delete_other_drinks)
+        layout.addView(del_others)
+
+        alert.setView(layout)
+
+        alert.setPositiveButton("Ok") { dialog, whichButton ->
+
+            Log.d(TAG, Tools.modifyPrices( bar_id.toString(), input.text.toString(), m_beverageList, del_others.isChecked).toString())
+
+            m_beverageList.forEach {
+                Log.d(TAG,"Cocktail: " + it.name + "\tprice: " + it.price + " €\n")
+            }
+
+            /// Prepare result
+
+            val resultIntent = Intent()
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
+        }
+        alert.setNegativeButton(R.string.cancel) { dialog, whichButton ->
+
         }
 
-        /// Prepare result
-
-        val resultIntent = Intent()
-        setResult(Activity.RESULT_OK, resultIntent)
-        finish()
+        alert.show()
     }
 
     /**

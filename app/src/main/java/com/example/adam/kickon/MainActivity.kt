@@ -1,6 +1,7 @@
 package com.example.adam.kickon
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
@@ -73,5 +74,17 @@ class MainActivity : Activity() {
             val adapter = BarAdapter(this, barList)
             runOnUiThread { listView.adapter = adapter }
         }.start()
+    }
+
+    init {
+        instance = this
+    }
+
+    companion object {
+        private var instance: MainActivity? = null
+
+        fun applicationContext() : Context {
+            return instance!!.applicationContext
+        }
     }
 }

@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:padding="6dp">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="4dp"
+    android:background="@drawable/beverage_border"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="10dp">
 
     <EditText
         android:id="@+id/editBeverage"
         android:layout_width="197dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginEnd="15dp"
         android:background="@color/common_google_signin_btn_text_dark_default"
+        android:hint="@string/getr_nk"
+        android:inputType="text"
+        android:padding="2dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black" />
 
@@ -22,10 +27,10 @@
         android:id="@+id/editPrice"
         android:layout_width="47dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="82dp"
         android:background="@color/common_google_signin_btn_text_dark_default"
+        android:hint="@string/example_price"
+        android:inputType="numberDecimal"
+        android:padding="2dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/black" />
 
@@ -33,21 +38,16 @@
         android:id="@+id/textPriceUnit"
         android:layout_width="21dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="60dp"
+        android:layout_marginEnd="5dp"
+        android:padding="2dp"
         android:text="@string/list_price_unit"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@android:color/background_light" />
 
     <ImageButton
         android:id="@+id/deleteButton"
-        android:layout_width="36dp"
-        android:layout_height="42dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="-60dp"
-        android:layout_marginTop="-10dp"
-        android:layout_toEndOf="@+id/textPriceUnit"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:contentDescription="@string/delete_drink_button"
         app:srcCompat="@android:drawable/ic_delete" />
-
-</RelativeLayout>
+</LinearLayout>
