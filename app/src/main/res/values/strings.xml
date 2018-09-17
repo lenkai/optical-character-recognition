@@ -34,4 +34,6 @@
     <string name="delete_drink_button">Delete Drink Button</string>
     <string name="share_bar">Button to share bar</string>
     <string name="delete_other_drinks">Bestehende Getränke löschen</string>
+    <string name="list_amount_unit">l</string>
+    <string name="example_amount">0,33</string>
 </resources>

@@ -132,7 +132,8 @@ class Tools {
                 drink_name_string += it.name + ","
                 //change from euro to cent (no decimal point)
                 prices_string += (it.price * 100).toString() + ","
-                quantities_string += "330,"
+                //change from Liter to Milliliter (no decimal point)
+                quantities_string += ((it.amount * 1000).toString() + ",")
                 skip_string += ","
             }
 
