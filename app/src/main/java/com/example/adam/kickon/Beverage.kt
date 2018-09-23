@@ -9,5 +9,5 @@ package com.example.adam.kickon
  */
 class Beverage (
     var name : String = "",
-    var price : Double = 0.0,
+    var price : Double = 1.0,
     var amount : Double = 0.33)

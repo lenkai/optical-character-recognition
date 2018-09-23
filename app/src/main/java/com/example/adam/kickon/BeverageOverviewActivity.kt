@@ -29,7 +29,7 @@ import kotlin.properties.Delegates
  */
 class BeverageOverviewActivity : Activity() {
 
-    private var TAG = "BEVERAGE_OVERVIEW"
+    private val TAG = "BEVERAGE_OVERVIEW"
 
     private lateinit var m_recyclerView: RecyclerView
     private lateinit var m_viewAdapter: RecyclerView.Adapter<*>
@@ -60,16 +60,17 @@ class BeverageOverviewActivity : Activity() {
 
         /// Correct rotation of the picture
 
-        val matrix = Matrix()
-        matrix.postRotate(90.0F)
         // Get Bitmap from imageuri
-        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-        val bitmapRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true)
+        var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+        val matrix = Matrix()
+
+        matrix.postRotate(90.0F)
+        bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true)
 
         /// OCR
 
         // Detect cocktails and there prices
-        m_beverageList =  m_ocrProcessor.detectFrom(bitmapRotated) // detectPrices(items)
+        m_beverageList =  m_ocrProcessor.detectFrom(bitmap) // detectPrices(items)
 
         /// Preparing the RecyclerView
 
@@ -135,7 +136,7 @@ class BeverageOverviewActivity : Activity() {
      * @brief Adding a default beverage to the beverage list
      */
     fun addBeverage(view : View) {
-        m_beverageList.add(m_beverageList.size, Beverage())
+        m_beverageList.add(m_beverageList.size, Beverage(getString(R.string.getr_nk, getString(R.string.example_price).replace(",", ".").toDouble())))
         m_viewAdapter.notifyDataSetChanged()
     }
 }

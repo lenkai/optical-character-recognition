@@ -13,9 +13,9 @@
 
     <EditText
         android:id="@+id/editBeverage"
-        android:layout_width="197dp"
+        android:layout_width="167dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="5dp"
         android:background="@color/common_google_signin_btn_text_dark_default"
         android:hint="@string/getr_nk"
         android:inputType="text"
@@ -24,9 +24,32 @@
         android:textColor="@android:color/black" />
 
     <EditText
+        android:id="@+id/editAmount"
+        android:layout_width="52dp"
+        android:layout_height="wrap_content"
+        android:background="@color/common_google_signin_btn_text_dark_default"
+        android:hint="@string/example_amount"
+        android:inputType="numberDecimal"
+        android:padding="2dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/textAmountUnit"
+        android:layout_width="21dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_weight="1"
+        android:padding="2dp"
+        android:text="@string/list_amount_unit"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/background_light" />
+
+    <EditText
         android:id="@+id/editPrice"
         android:layout_width="47dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:background="@color/common_google_signin_btn_text_dark_default"
         android:hint="@string/example_price"
         android:inputType="numberDecimal"

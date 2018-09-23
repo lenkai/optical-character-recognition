@@ -2,6 +2,7 @@ package com.example.adam.kickon
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.util.Log
 import android.util.SparseArray
 import com.google.android.gms.vision.Frame
@@ -19,6 +20,7 @@ import java.util.regex.Pattern
 class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     // Format of the prices
     private val PRICE_REGEX = "\\d+((,|\\.)(\\d)*)?" // "\\d+((,|\\.)\\d{2})?"
+    private val ROTATION_ANGLE = 90.0F
     // Topic for the log
     private val TAG = "OCRProcessor"
     // Google Visions textrecognizer
@@ -46,24 +48,52 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
      * @return @return map with cocktails (Strings) as keys and there prices (Doubles) as values
      */
     fun detectFrom(bitmap : Bitmap) : MutableList<Beverage> {
-        val frame = Frame.Builder().setBitmap(bitmap).build()
-        // Do OCR
-        return analyseText(m_textRecognizer.detect(frame))
+        /// Do OCR
+
+        var textblocks = m_textRecognizer.detect(Frame.Builder().setBitmap(bitmap).build())
+        var beverage_list = analyseText(textblocks)
+
+        var rotatedBitmap = bitmap
+        val matrix = Matrix()
+
+        matrix.postRotate(ROTATION_ANGLE)
+
+        if(beverage_list.size == 0) {
+
+            for (count in 1 .. (360.0F / ROTATION_ANGLE - 0.5).toInt()) {
+                val oldRotatedBitmap = rotatedBitmap
+                rotatedBitmap = Bitmap.createBitmap(rotatedBitmap, 0, 0, rotatedBitmap.getWidth(), rotatedBitmap.getHeight(), matrix, true)
+                oldRotatedBitmap.recycle()
+
+                val new_textblocks = m_textRecognizer.detect(Frame.Builder().setBitmap(rotatedBitmap).build())
+                val new_beverage_list = analyseText(new_textblocks)
+
+
+                if (new_beverage_list.size > 0) {
+                    beverage_list = new_beverage_list
+                    break
+                }
+
+                Log.d(TAG, count.toString())
+            }
+        }
+
+        return beverage_list
     }
 
     /**
      * @brief Detects known cocktails and there prices, based on the results of a textrecognizer
      *
-     * @param textBlocks calculated by a textrecognizer
+     * @param textblocks calculated by a textrecognizer
      *
      * @return map with cocktails (Strings) as keys and there prices (Doubles) as values
      */
-    private fun analyseText(textBlocks: SparseArray<TextBlock>) : MutableList<Beverage> {
+    private fun analyseText(textblocks: SparseArray<TextBlock>) : MutableList<Beverage> {
         var textblock_list = mutableListOf<TextBlock>()
 
         // Transform to list
-        for(index in 0 .. textBlocks.size() - 1) {
-            textblock_list.add(textBlocks.valueAt(index))
+        for(index in 0 .. textblocks.size() - 1) {
+            textblock_list.add(textblocks.valueAt(index))
         }
 
         /// Sort to left side (cocktail) and right side (amount and prices)
