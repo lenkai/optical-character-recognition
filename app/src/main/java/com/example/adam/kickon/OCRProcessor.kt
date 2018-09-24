@@ -137,7 +137,9 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
         for (index in 0..(left.size - 1)) {
             val text = left.elementAt(index)
 
-            if(m_drinks.contains(text)) {
+            if(m_drinks.contains(text) ||
+               m_drinks.contains(text.replace("l", "I")) ||
+               m_drinks.contains(text.replace("I", "l"))) {
                 detected_cocktails.add(text)
             }
         }
