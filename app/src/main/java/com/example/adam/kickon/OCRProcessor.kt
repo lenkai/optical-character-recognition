@@ -9,6 +9,8 @@ import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
 import java.lang.Math.abs
+import java.lang.Math.min
+import java.math.BigDecimal
 import java.util.regex.Pattern
 
 /**
@@ -21,6 +23,7 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
     // Format of the prices
     private val PRICE_REGEX = "\\d+((,|\\.)(\\d)*)?" // "\\d+((,|\\.)\\d{2})?"
     private val ROTATION_ANGLE = 90.0F
+    private val SLANT = 180
     // Topic for the log
     private val TAG = "OCRProcessor"
     // Google Visions textrecognizer
@@ -107,24 +110,43 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
 
 
         val left = mutableListOf<String>()
+        val left_y_coo = mutableListOf<Integer>()
         val prices = mutableListOf<String>()
+        val prices_y_coo = mutableListOf<Integer>()
         val liters = mutableListOf<String>()
+        val amount_y_coo = mutableListOf<Integer>()
 
         left_blocks.forEach {
+            val y_coo = it.boundingBox.top
+            var count = 0
+
             it.components.forEach {
                 left.add(it.value.replace("\n", ""))
+                left_y_coo.add(Integer(y_coo + count * (it.boundingBox.height() / it.components.size)))
+                count++
             }
         }
 
         price_blocks.forEach {
+            val y_coo = it.boundingBox.top
+            var count = 0
+
             it.components.forEach {
                 prices.add(it.value.replace("\n", "").replace("E", "").replace("€", "").replace(" ", ""))
+                prices_y_coo.add(Integer(y_coo + count * (it.boundingBox.height() / it.components.size)))
+                count++
             }
         }
 
         liter_blocks.forEach {
+            val y_coo = it.boundingBox.top
+            var count = 0
+
             it.components.forEach {
                 liters.add(it.value.replace("\n", "").replace(" ", "").replace("cl", "").replace("l", ""))
+                amount_y_coo.add(Integer(y_coo + count * (it.boundingBox.height() / it.components.size)))
+                Log.d(TAG, "Text height: " + (it.boundingBox.height() / it.components.size))
+                count++
             }
         }
 
@@ -134,14 +156,24 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
         val detected_prices = mutableListOf<Double>()
         val detected_liters = mutableListOf<Double>()
 
-        for (index in 0..(left.size - 1)) {
-            val text = left.elementAt(index)
+        val detected_cocktails_y_coo = mutableListOf<Integer>()
+        val detected_prices_y_coo = mutableListOf<Integer>()
+        val detected_amount_y_coo = mutableListOf<Integer>()
 
-            if(m_drinks.contains(text) ||
-               m_drinks.contains(text.replace("l", "I")) ||
-               m_drinks.contains(text.replace("I", "l"))) {
-                detected_cocktails.add(text)
+        for (index in 0..(left.size - 1)) {
+            val text = left.elementAt(index).replace("l", "(I|l)").replace("I", "(I|l)")
+
+            m_drinks.forEach {
+                if(Pattern.matches(text, it)){
+                    detected_cocktails.add(it)
+                    detected_cocktails_y_coo.add(left_y_coo.elementAt(index))
+                    return@forEach
+                }
             }
+        }
+
+        detected_cocktails_y_coo.forEach {
+            Log.d(TAG, "left y: " + it.toString())
         }
 
         for(index in 0..(liters.size - 1)) {
@@ -155,14 +187,21 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
 
             if(Pattern.matches(PRICE_REGEX, text)) {
                 detected_liters.add(text.replace(",", ".").toDouble())
+                detected_amount_y_coo.add(amount_y_coo.elementAt(index))
             }
         }
 
-        for(index in 0..(prices.size - 1)) {
+        for(index in 0 .. (prices.size - 1)) {
             val text = prices.elementAt(index)
+
             if(Pattern.matches(PRICE_REGEX, text)) {
                 detected_prices.add(text.replace(",", ".").toDouble())
+                detected_prices_y_coo.add(prices_y_coo.elementAt(index))
             }
+        }
+
+        detected_amount_y_coo.forEach {
+            Log.d(TAG, "amount y: " + it.toString())
         }
 
         /// Store cocktail with belonging price in a map
@@ -177,12 +216,29 @@ class OCRProcessor(val m_context: Context, val m_drinks : ArrayList<String>) {
             size = detected_prices.size
         }
 
-        if(detected_liters.size < size){
+        /*if(detected_liters.size < size){
             size = detected_liters.size
-        }
+        }*/
+
+        var amount_index = 0
 
         for (index in 0..(size - 1)) {
-            list.add(Beverage(detected_cocktails.elementAt(index), detected_prices.elementAt(index), detected_liters.elementAt(index)))
+            var amount : Double
+
+            if(abs(  detected_amount_y_coo.elementAt(amount_index).toInt() - detected_cocktails_y_coo.elementAt(index).toInt()) < (index + 1) * SLANT) {
+                amount = detected_liters.elementAt(amount_index)
+                amount_index++
+                size++
+            }
+            else {
+                amount = 0.01
+                Log.d(TAG, "CATCHED!")
+            }
+
+            list.add(Beverage(detected_cocktails.elementAt(index), detected_prices.elementAt(index), amount))
+
+            if(amount_index >= detected_liters.size)
+                break
         }
 
         return list
