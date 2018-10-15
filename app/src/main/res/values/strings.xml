@@ -9,6 +9,7 @@
     <string name="list_beverage">Beverage:</string>
     <string name="list_price">Price:</string>
     <string name="list_price_unit">€</string>
+    <string name="list_amount">Amount:</string>
     <string name="beschreibung">Beschreibung</string>
     <string name="ffnungszeiten">Öffnungszeiten</string>
     <string name="getr_nke">Getränke</string>
